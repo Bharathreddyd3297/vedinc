@@ -1,7 +1,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { z } from "zod";
-import { supabase } from "../lib/supabase";
-import { signToken } from "../lib/jwt";
+import { supabase } from "../../lib/supabase";
+import { signToken } from "../../lib/jwt";
 import bcrypt from "bcrypt";
 
 const SALT_ROUNDS = 10;
