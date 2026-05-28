@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================
+   THEME VARIABLES
+========================= */
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    /* 🔥 Force true black */
+    --foreground: 210 40% 98%;
+
+    --card: 215 45% 12%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 215 45% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 191 94% 62%;
+    --primary-foreground: 215 50% 8%;
+
+    --secondary: 215 35% 18%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 215 30% 20%;
+    --muted-foreground: 210 20% 60%;
+
+    --accent: 0 72% 51%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 215 30% 25%;
+    --input: 215 30% 20%;
+    --ring: 191 94% 62%;
+
+    --radius: 0.75rem;
+
+    /* Shadows */
+    --shadow-glow: 0 0 40px hsl(191 94% 62% / 0.3);
+    --shadow-card: 0 10px 40px hsl(0 0% 0% / 0.3);
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 210 40% 98%;
+  }
+}
+
+/* =========================
+   GLOBAL BASE
+========================= */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  body {
+    background: black;
+    /* 🔥 Hard override */
+    @apply text-foreground antialiased;
+    font-family: 'Arial', sans-serif;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+    margin: 0;
+  }
+
+  #root {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Arial', sans-serif;
+  }
+}
+
+/* =========================
+   COMPONENT STYLES
+========================= */
+
+@layer components {
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-xl border border-border/50 rounded-2xl;
+    box-shadow: var(--shadow-card);
+  }
+
+  .glow-text {
+    text-shadow:
+      0 0 20px hsl(var(--primary) / 0.5),
+      0 0 40px hsl(var(--primary) / 0.3);
+  }
+
+  .glow-border {
+    box-shadow:
+      var(--shadow-glow),
+      inset 0 0 20px hsl(var(--primary) / 0.05);
+  }
+}
+
+/* =========================
+   UTILITIES
+========================= */
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg,
+        hsl(var(--primary)) 0%,
+        hsl(191 80% 45%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: black;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
