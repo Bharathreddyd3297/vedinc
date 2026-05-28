@@ -24,7 +24,12 @@ export default function Profile() {
         const loadProfile = async () => {
             try {
                 const data = await api.getMyProfile();
-                setForm(data);
+                setForm({
+                    name: data.name || "",
+                    title: data.title || "",
+                    bio: data.bio || "",
+                    avatar: data.avatar || "",
+                });
                 setPreview(data.avatar || null);
             } catch (err) {
                 console.error(err);
@@ -37,7 +42,7 @@ export default function Profile() {
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        setForm({ ...form, [e.target.name]: e.target.value || "" });
     };
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,13 +64,17 @@ export default function Profile() {
         try {
             setLoading(true);
 
-            const formData = new FormData();
-            formData.append("name", form.name);
-            if (form.title) formData.append("title", form.title);
-            if (form.bio) formData.append("bio", form.bio);
-            if (avatarFile) formData.append("avatar", avatarFile);
+            const updateData: any = {
+                name: form.name,
+                title: form.title || null,
+                bio: form.bio || null,
+            };
 
-            await api.updateMyProfile(formData);
+            if (avatarFile) {
+                updateData.avatar = avatarFile;
+            }
+
+            await api.updateProfile(updateData);
 
             alert("Profile updated successfully 🚀");
         } catch (err) {

@@ -9,6 +9,7 @@ type Course = {
     title: string;
     description: string;
     price: number;
+    thumbnail?: string;
     category?: {
         name: string;
     };
@@ -135,6 +136,15 @@ export default function IndustryHub() {
                                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none">
                                     <div className="absolute w-60 h-60 bg-cyan-400/10 blur-3xl rounded-full top-1/3 left-1/3" />
                                 </div>
+
+                                {/* THUMBNAIL */}
+                                {course.thumbnail && (
+                                    <img
+                                        src={course.thumbnail}
+                                        alt={course.title}
+                                        className="w-full h-48 object-cover"
+                                    />
+                                )}
 
                                 <div className="p-6">
                                     {course.category?.name && (

@@ -8,6 +8,7 @@ import {
     FolderPlus,
     Pencil,
     X,
+    Upload,
 } from "lucide-react";
 import ParticlesBackground from "@/components/ParticlesBackground";
 
@@ -55,6 +56,8 @@ export default function Courses() {
     const [instructorId, setInstructorId] = useState("");
     const [level, setLevel] = useState("");
     const [duration, setDuration] = useState("");
+    const [thumbnail, setThumbnail] = useState<File | null>(null);
+    const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
 
     /* EDIT STATE */
     const [editModalOpen, setEditModalOpen] = useState(false);
@@ -100,43 +103,81 @@ export default function Courses() {
     };
 
     const deleteCategory = async (id: string) => {
-        if (!confirm("Delete this category?")) return;
-        await api.deleteCategory(id);
-        loadCategories();
+        if (!confirm("Delete this category? (It must have no courses)")) return;
+        try {
+            await api.deleteCategory(id);
+            loadCategories();
+            alert("Category deleted ✅");
+        } catch (err: any) {
+            alert("Cannot delete: " + (err.message || "Ensure category has no courses"));
+        }
     };
 
     /* ================= CREATE COURSE ================= */
 
+    const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setThumbnail(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setThumbnailPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const createCourse = async () => {
-        if (!title || !price || !categoryId) return;
+        if (!title.trim() || !categoryId) {
+            alert("Please enter title and select a category");
+            return;
+        }
 
-        const newCourse = await api.createCourse({
-            title,
-            description,
-            price: Number(price),
-            categoryId,
-            instructorId: instructorId || undefined,
-            level,
-            duration,
-        });
+        if (!price || parseFloat(price) <= 0) {
+            alert("Please enter a valid price (must be greater than 0)");
+            return;
+        }
 
-        /* reset form */
-        setTitle("");
-        setDescription("");
-        setPrice("");
-        setLevel("");
-        setDuration("");
-        setInstructorId("");
+        try {
+            const newCourse = await api.createCourse({
+                title,
+                description,
+                price: parseFloat(price),
+                categoryId,
+                instructorId: instructorId || undefined,
+                level,
+                duration,
+                thumbnail,
+            });
 
-        navigate(`/admin/courses/${newCourse.id}/curriculum`);
+            /* reset form */
+            setTitle("");
+            setDescription("");
+            setPrice("");
+            setLevel("");
+            setDuration("");
+            setInstructorId("");
+            setThumbnail(null);
+            setThumbnailPreview(null);
+
+            alert("Course created ✅");
+            navigate(`/admin/courses/${newCourse.id}/curriculum`);
+        } catch (err: any) {
+            alert("Error: " + (err.message || "Failed to create course"));
+        }
     };
 
     /* ================= DELETE ================= */
 
     const deleteCourse = async (id: string) => {
         if (!confirm("Delete this course?")) return;
-        await api.deleteCourse(id);
-        loadCourses();
+        try {
+            await api.deleteCourse(id);
+            loadCourses();
+            alert("Course deleted ✅");
+        } catch (err: any) {
+            alert("Error: " + (err.message || "Failed to delete course"));
+        }
     };
 
     /* ================= EDIT ================= */
@@ -347,6 +388,28 @@ export default function Courses() {
                         onChange={(e) => setDescription(e.target.value)}
                         className="bg-black/30 border border-white/10 rounded-xl px-4 py-3 h-28"
                     />
+
+                    {/* Thumbnail Upload */}
+                    <div className="space-y-2">
+                        <label className="block text-sm text-white/60">Thumbnail Image</label>
+                        {thumbnailPreview && (
+                            <img
+                                src={thumbnailPreview}
+                                alt="Thumbnail preview"
+                                className="w-full h-40 object-cover rounded-lg border border-white/20"
+                            />
+                        )}
+                        <label className="flex items-center gap-2 w-full bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-xl cursor-pointer text-white font-medium transition">
+                            <Upload size={18} />
+                            {thumbnail ? thumbnail.name : "Choose Thumbnail"}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleThumbnailChange}
+                                className="hidden"
+                            />
+                        </label>
+                    </div>
 
                     <button
                         onClick={createCourse}

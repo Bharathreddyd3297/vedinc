@@ -103,22 +103,38 @@ export default function CourseEditor() {
     /* ================= MODULE ================= */
 
     const createModule = async () => {
-        if (!newModuleTitle.trim() || !id) return;
+        if (!newModuleTitle.trim() || !id) {
+            alert("Error: Course ID or module title missing");
+            console.error("Missing:", { id, newModuleTitle });
+            return;
+        }
 
-        await api.createModule({
-            title: newModuleTitle,
-            courseId: id,
-        });
+        try {
+            console.log("Creating module:", { title: newModuleTitle, courseId: id });
+            await api.createModule({
+                title: newModuleTitle,
+                courseId: id,
+            });
 
-        setNewModuleTitle("");
-        loadCourse();
+            setNewModuleTitle("");
+            loadCourse();
+            alert("Module created ✅");
+        } catch (err: any) {
+            console.error("Module creation error:", err);
+            alert("Error: " + (err.message || "Failed to create module"));
+        }
     };
 
     const deleteModule = async (moduleId: string) => {
         if (!confirm("Delete this module?")) return;
 
-        await api.deleteModule(moduleId);
-        loadCourse();
+        try {
+            await api.deleteModule(moduleId);
+            loadCourse();
+            alert("Module deleted ✅");
+        } catch (err: any) {
+            alert("Error: " + (err.message || "Failed to delete module"));
+        }
     };
 
     const toggleModule = (moduleId: string) => {
@@ -132,17 +148,25 @@ export default function CourseEditor() {
     /* ================= LESSON ================= */
 
     const createLesson = async (moduleId: string) => {
-        if (!lessonTitle || !pdfFile) return;
+        if (!lessonTitle || !pdfFile) {
+            alert("Please enter lesson title and select a PDF file");
+            return;
+        }
 
-        await api.createPdfLesson({
-            moduleId,
-            title: lessonTitle,
-            file: pdfFile,
-        });
+        try {
+            await api.createPdfLesson({
+                moduleId,
+                title: lessonTitle,
+                file: pdfFile,
+            });
 
-        setLessonTitle("");
-        setPdfFile(null);
-        loadCourse();
+            setLessonTitle("");
+            setPdfFile(null);
+            loadCourse();
+            alert("Lesson created ✅");
+        } catch (err: any) {
+            alert("Error: " + (err.message || "Failed to create lesson"));
+        }
     };
 
     const deleteLesson = async (lessonId: string) => {
@@ -242,7 +266,7 @@ export default function CourseEditor() {
                     </button>
                 </div>
 
-                {course.modules.map((module, index) => {
+                {course?.modules?.map((module, index) => {
                     const expanded = expandedModules.includes(module.id);
 
                     return (

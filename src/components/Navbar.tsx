@@ -82,7 +82,7 @@ const Navbar = () => {
                                border border-white/20 bg-white/10
                                backdrop-blur-md text-sm text-white font-medium"
                   >
-                    Admin Login
+                    Login
                   </Link>
                 </motion.div>
               </>

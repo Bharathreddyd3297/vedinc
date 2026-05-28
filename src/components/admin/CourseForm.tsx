@@ -1,13 +1,29 @@
 import { useState } from "react";
 import { api } from "@/lib/api";
+import { Upload } from "lucide-react";
 
 const CourseForm = () => {
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("");
     const [level, setLevel] = useState("BEGINNER");
     const [description, setDescription] = useState("");
+    const [price, setPrice] = useState("");
+    const [thumbnail, setThumbnail] = useState<File | null>(null);
+    const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setThumbnail(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setThumbnailPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleSubmit = async () => {
         setError("");
@@ -19,6 +35,8 @@ const CourseForm = () => {
                 category,
                 level,
                 description,
+                price: price ? parseFloat(price) : 0,
+                thumbnail,
             });
 
             if (data.message && data.message !== "Course created successfully") {
@@ -30,6 +48,9 @@ const CourseForm = () => {
             setCategory("");
             setLevel("BEGINNER");
             setDescription("");
+            setPrice("");
+            setThumbnail(null);
+            setThumbnailPreview(null);
 
             alert("Course created successfully");
         } catch (e: any) {
@@ -62,6 +83,14 @@ const CourseForm = () => {
                     onChange={(e) => setCategory(e.target.value)}
                 />
 
+                <input
+                    className="w-full bg-black/30 border border-white/20 rounded-lg px-4 py-2 text-white"
+                    placeholder="Price (₹)"
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                />
+
                 <select
                     className="w-full bg-black/30 border border-white/20 rounded-lg px-4 py-2 text-white"
                     value={level}
@@ -79,6 +108,28 @@ const CourseForm = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
+
+                {/* Thumbnail Upload */}
+                <div className="space-y-2">
+                    <label className="block text-sm text-white/60">Thumbnail Image</label>
+                    {thumbnailPreview && (
+                        <img
+                            src={thumbnailPreview}
+                            alt="Thumbnail preview"
+                            className="w-full h-40 object-cover rounded-lg border border-white/20"
+                        />
+                    )}
+                    <label className="flex items-center gap-2 w-full bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-lg cursor-pointer text-white font-medium transition">
+                        <Upload size={18} />
+                        {thumbnail ? thumbnail.name : "Choose Thumbnail"}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleThumbnailChange}
+                            className="hidden"
+                        />
+                    </label>
+                </div>
 
                 <button
                     onClick={handleSubmit}

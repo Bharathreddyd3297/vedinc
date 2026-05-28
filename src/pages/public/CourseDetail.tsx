@@ -49,6 +49,7 @@ type Course = {
     price: number;
     level?: string;
     duration?: string;
+    thumbnail?: string;
     instructor?: Instructor;
     modules: Module[];
     objectives?: Objective[];
@@ -161,6 +162,14 @@ export default function CourseDetails() {
 
                         {/* HERO */}
                         <div className="space-y-6">
+                            {course.thumbnail && (
+                                <img
+                                    src={course.thumbnail}
+                                    alt={course.title}
+                                    className="w-full h-80 object-cover rounded-2xl border border-white/10"
+                                />
+                            )}
+
                             <h1 className="text-5xl font-extrabold text-white leading-tight">
                                 {course.title}
                             </h1>
