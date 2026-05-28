@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { extractAndVerifyToken, sendError } from "../../../lib/auth";
+import { extractAndVerifyToken, sendError } from "../lib/auth";
 
 export default async (req: VercelRequest, res: VercelResponse) => {
     res.setHeader("Content-Type", "application/json");
