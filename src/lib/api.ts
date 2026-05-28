@@ -1,14 +1,7 @@
 import { supabase } from "./supabase";
 
-const API_BASE = import.meta.env.VITE_API_URL as string;
-
 const getToken = () => localStorage.getItem("token");
 const getRole = () => localStorage.getItem("role");
-
-const authHeader = () => {
-  const token = getToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
 
 export const api = {
   /* =========================
